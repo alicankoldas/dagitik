@@ -1,14 +1,10 @@
 __author__ = 'AKOLDAS'
 
-
-
 import threading
 import Queue
 import sys
 
-#Number of threads
-n_thread = 3
-#Create queue
+
 queue = Queue.Queue()
 queueLock = threading.Lock()
 
@@ -21,67 +17,68 @@ class ThreadClass(threading.Thread):
         self.queue = queue
 
     def run(self):
-        while not exitFlag :
         #Get from queue job
-            queueLock.acquire()
-            host = self.queue.get()
-            print self.getName() + ":" + host
-        #signals to queue job is done
-            self.queue.task_done()
-            queueLock.release()
+
+            while exitFlag == 0:
+                host = self.queue.get()
+                print self.getName() + ":" + host
+                #signals to queue job is done
+                self.queue.task_done()
+                queueLock.release()
 
 #Create number process
-for i in range(n_thread):
-    t = ThreadClass(queue)
-    t.setDaemon(True)
-    t.start()
+def function_1 (shift, n_thread, length):
 
-count = 0
-shift = 3
-n = 5
-str = 'abcdefghijklmnopqrstuvwxyz'
-str_1 = ''
-i = 0
-for i in range (len(str)):
-    str_1 += str[(i+shift)%(len(str))]
+    exitFlag = 0
+    count = 0
+    for i in range(n_thread):
+        t = ThreadClass(queue)
+        t.setDaemon(True)
+        t.start()
 
-try :
-    hostfile = open("metin.txt", "r")
-except sys.IOError as e :
-    print 'could not connect to file metin.txt'
+    str = 'abcdefghijklmnopqrstuvwxyz'
+    str_1 = ''
+    i = 0
+    for i in range (len(str)):
+        str_1 += str[(i+shift)%(len(str))]
+
+    try :
+        hostfile = open("metin.txt", "r")
+    except sys.IOError as e :
+        print 'could not connect to file metin.txt'
 
 
-try :
-    g = open("crypted_3_3_5.txt","a")
-except sys.IOError as e :
-    print 'could not connect file crypted_3_3_5.txt'
-i = 0
-while exitFlag == 0 :
-    if ( count is not 1 ):
-        c = hostfile.read(n)
-        if len(c) is not n:
-            exitFlag = 1
-        str_3 = c
-        str_4 = ''
-        i = 0
-        j = 0
-        bosluk = " "
-        for j in range (len(str_3)):
-            for i in range (len(str)):
-                if (str_3[j] == str[i]):
-                    str_4 += str[(i+shift)%(len(str))]
-                elif str_3[j] == bosluk :
-                    str_4 += bosluk
-        queue.put(str_4)
-        g.write(str_4)
-        count = count + 1
-    else:
-        count = 0
+    try :
+        g = open("crypted_3_3_5.txt","a")
+    except sys.IOError as e :
+        print 'could not connect file crypted_3_3_5.txt'
+    i = 0
+    while exitFlag == 0 :
+        queueLock.acquire()
+        if (count is not 1 ):
+            c = hostfile.read(length)
+            if len(c) is not length:
+                exitFlag = 1
+                queueLock.release()
+            str_3 = c.lower()
+            str_4 = ''
+            i = 0
+            j = 0
+            for j in range (len(str_3)):
+                if (str_3[j].isalpha() == False):
+                                str_4 += str_3[j]
+                for i in range (len(str)):
+                        if (str_3[j] == str[i] ):
+                            str_4 += str[(i+shift)%(len(str))]
 
-exitFlag = 1
+            queue.put(str_4.upper())
+            g.write(str_4.upper())
+            count = count + 1
+        else:
+            count = 0
+            queueLock.release()
+if __name__ == "__main__":
+   function_1 (3,3,5)
 
 
 queue.join()
-
-
-
