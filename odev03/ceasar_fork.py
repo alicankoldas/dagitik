@@ -39,8 +39,8 @@ def print_string(shift, process_number, length):
 
 
     for i in range (len(str)):
-        str_1 += str[(i+shift)%(len(str))]
-
+        str_1 += str[(26 -shift + i)%(len(str))]
+    print(str_1)
     try :
         hostfile = open("metin.txt", "r")
     except sys.IOError as e :
@@ -53,10 +53,7 @@ def print_string(shift, process_number, length):
         print 'could not connect file crypted_3_3_5.txt'
     i = 0
 
-    for w in xrange(process_number):
-            p = Process(target=worker,args = (done_queue,work_queue))
-            p.start()
-            processes.append(p)
+
 
 
     while exitFlag == 0 :
@@ -80,7 +77,7 @@ def print_string(shift, process_number, length):
                                 str_4 += str_3[j]
                 for i in range (len(str)):
                         if (str_3[j] == str[i] ):
-                            str_4 += str[(i+shift)%(len(str))]
+                            str_4 += str[(26 -shift + i)%(len(str))]
 
             count = count + 1
 
@@ -93,16 +90,16 @@ def print_string(shift, process_number, length):
             l.release()
 
     for w in xrange(process_number):
-        work_queue.put('STOP')
+            p = Process(target=worker,args = (done_queue,work_queue))
+            p.start()
+            processes.append(p)
+            work_queue.put('STOP')
 
     for p in processes:
         p.join()
 
     done_queue.put('STOP')
 
-
-    for string_2 in iter(done_queue.get, 'STOP'):
-        print string_2
 
 if __name__ == "__main__":
       print_string(3,3,5)

@@ -40,8 +40,8 @@ def function_1 (shift, n_thread, length):
     str_1 = ''
     i = 0
     for i in range (len(str)):
-        str_1 += str[(i+shift)%(len(str))]
-
+        str_1 += str[(26 -shift + i) % (len(str))]
+    print(str_1)
     try :
         hostfile = open("metin.txt", "r")
     except sys.IOError as e :
@@ -69,7 +69,7 @@ def function_1 (shift, n_thread, length):
                                 str_4 += str_3[j]
                 for i in range (len(str)):
                         if (str_3[j] == str[i] ):
-                            str_4 += str[(i+shift)%(len(str))]
+                            str_4 += str[(26 -shift + i)%(len(str))]
 
             queue.put(str_4.upper())
             g.write(str_4.upper())
