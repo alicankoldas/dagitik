@@ -1,5 +1,6 @@
 __author__ = 'AKOLDAS'
 
+
 import sys
 import time
 
@@ -33,6 +34,10 @@ def print_string(shift, process_number, length):
     str = 'abcdefghijklmnopqrstuvwxyz'
     str_1 = ''
     i = 0
+
+
+
+
     for i in range (len(str)):
         str_1 += str[(i+shift)%(len(str))]
 
@@ -47,39 +52,47 @@ def print_string(shift, process_number, length):
     except sys.IOError as e :
         print 'could not connect file crypted_3_3_5.txt'
     i = 0
-    while exitFlag == 0 :
-        l.acquire()
-        if (count is not 1 ):
 
+    for w in xrange(process_number):
+            p = Process(target=worker,args = (done_queue,work_queue))
+            p.start()
+            processes.append(p)
+
+
+    while exitFlag == 0 :
+
+        if (count is not 1 ):
+            l.acquire()
             c = hostfile.read(length)
 
             if len(c) is not length:
                 exitFlag = 1
+                l.release()
+
 
             str_3 = c.lower()
             str_4 = ''
             i = 0
             j = 0
+
             for j in range (len(str_3)):
                 if (str_3[j].isalpha() == False):
                                 str_4 += str_3[j]
                 for i in range (len(str)):
                         if (str_3[j] == str[i] ):
                             str_4 += str[(i+shift)%(len(str))]
-            g.write(str_4.upper())
+
+            count = count + 1
 
             work_queue.put(str_4.upper())
-            #print(str_4.upper())
-            count = count + 1
-            l.release()
+            g.write(str_4.upper())
+
+
         else:
             count = 0
             l.release()
 
     for w in xrange(process_number):
-        p = Process(target=worker,args = (done_queue,work_queue))
-        p.start()
-        processes.append(p)
         work_queue.put('STOP')
 
     for p in processes:
@@ -88,6 +101,8 @@ def print_string(shift, process_number, length):
     done_queue.put('STOP')
 
 
+    for string_2 in iter(done_queue.get, 'STOP'):
+        print string_2
+
 if __name__ == "__main__":
       print_string(3,3,5)
-
