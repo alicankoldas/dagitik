@@ -16,13 +16,15 @@ class writeThread(threading.Thread):
 
     def run(self):
          string_1 = ''
-         while string_1 != 'bahoz':
+         while string_1 != 'bitti':
              string_1 = raw_input("Enter your input: ")
              print('input value %s in thread %s' % (string_1, self.name))
               # Sleep for random time between 1 ~ 3 second
              sock.send(string_1)
+             data_1 = sock.recv(1024)
              secondsToSleep = randint(1, 5)
              print('%s sleeping fo %d seconds...' % (self.name, secondsToSleep))
+             print data_1
              time.sleep(secondsToSleep)
 
 
