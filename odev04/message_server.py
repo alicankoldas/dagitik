@@ -4,6 +4,9 @@ __author__ = 'AKOLDAS'
 import socket # Import socket module
 import threading
 import time
+import datetime
+
+import random
 
 class client(threading.Thread):
     def __init__(self,clientSocket, clientAddr):
@@ -13,11 +16,22 @@ class client(threading.Thread):
 
     def run(self):
         k = 0
+        rakam_1 = 4
         print "Connection established:"
         data = "deneme"
+
         while len(data) :
             data = self.clientSocket.recv(1024)
             adres = 'Peki',client_addr
+            rakam_2 =  random.randint(1, 10)
+            print(rakam_2)
+            if (rakam_2 == rakam_1):
+                now = datetime.datetime.now()
+                string_3 = datetime.time(now.hour, now.minute, now.second)
+                print string_3
+                string_4 = "Merhaba saat su an",string_3
+                self.clientSocket.send(str(string_4))
+
             if data != "bitti":
                 self.clientSocket.send(str(adres))
             else :
