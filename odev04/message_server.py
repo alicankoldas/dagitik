@@ -12,13 +12,16 @@ class client(threading.Thread):
         self.clientAddr = clientAddr
 
     def run(self):
+        k = 0
         print "Connection established:"
         data = "deneme"
         while len(data) :
             data = self.clientSocket.recv(1024)
-            if data:
-                adres = 'Peki',client_addr
+            adres = 'Peki',client_addr
+            if data != "bitti":
                 self.clientSocket.send(str(adres))
+            else :
+                self.clientSocket.send(str(data))
             print('Client sent:', data)
             #self.sock.send(b'Oi you sent something to me')
         print "Client disconnected..."
