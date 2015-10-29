@@ -1,7 +1,7 @@
 __author__ = 'AKOLDAS'
 
 
-import socket # Import socket module
+import socket
 import threading
 import time
 import datetime
@@ -24,11 +24,10 @@ class client(threading.Thread):
             data = self.clientSocket.recv(1024)
             adres = 'Peki',client_addr
             rakam_2 =  random.randint(1, 10)
-            print(rakam_2)
+            print(rakam_2) # rakam dort oldugu zaman sunucu istemciye bildirimde bulunur
             if (rakam_2 == rakam_1):
                 now = datetime.datetime.now()
                 string_3 = datetime.time(now.hour, now.minute, now.second)
-                print string_3
                 string_4 = "Merhaba saat su an",string_3
                 self.clientSocket.send(str(string_4))
 
@@ -37,7 +36,7 @@ class client(threading.Thread):
             else :
                 self.clientSocket.send(str(data))
             print('Client sent:', data)
-            #self.sock.send(b'Oi you sent something to me')
+
         print "Client disconnected..."
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a socket object
@@ -45,21 +44,16 @@ host = "0.0.0.0" # Get local machine name
 port = 12345 # Reserve a port for your service.
 s.bind((host, port)) # Bind to the port
 threads = []
- # Now wait for client connection.
 
-threadCounter = 0
+
 while True:
                s.listen(5)
-               connection, client_addr = s.accept() # Establish connection with client.
-               threadCounter += 1
+               connection, client_addr = s.accept()
                myThreadOb1 = client(connection,client_addr)
                myThreadOb1.start()
                threads.append(myThreadOb1)
 
 
-
-#s.close()
-#connection.close()
 
 for t in threads :
     t.join()

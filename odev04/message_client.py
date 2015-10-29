@@ -38,7 +38,7 @@ class readThread(threading.Thread):
     def run(self):
          data_1  = ''
          while data_1 != 'bitti' :
-              # Sleep for random time between 1 ~ 3 second
+
              data_1 = sock.recv(1024)
              secondsToSleep = randint(1, 5)
              print('received value %s in thread %s' % (data_1, self.name))
@@ -47,7 +47,7 @@ class readThread(threading.Thread):
 
 
 if __name__ == "__main__":
-   # Declare objects of MyThread class
+
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     host = "127.0.0.1"
     port = 12345
@@ -55,10 +55,10 @@ if __name__ == "__main__":
 
     myThreadOb1 = writeThread('Thread 1')
     myThreadOb2 = readThread('Thread 2')
-   # Start running the threads!
+   # Threadleri calistirmaya basladik
     myThreadOb1.start()
     myThreadOb2.start()
-   # Wait for the threads to finish...
+   # Threadlerin bitmesi icin bekliyoruz...
     myThreadOb1.join()
     myThreadOb2.join()
 
