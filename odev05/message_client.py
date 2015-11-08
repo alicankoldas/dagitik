@@ -22,11 +22,11 @@ class writeThread_1(threading.Thread):
 
 
 s = socket.socket()         # Create a socket object
-host = socket.gethostname() # Get local machine name
-port = 12345                # Reserve a port for your service.
+host = "127.0.0.1" # Get local machine name
+port = 12345               # Reserve a port for your service.
 s.connect((host, port))
 
-myThreadOb1 = writeThread_1('Thread 1')
+myThreadOb1 = writeThread_1("Thread 1")
 myThreadOb1.start()
 myThreadOb1.join()
 s.close
