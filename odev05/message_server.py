@@ -7,6 +7,7 @@ import random
 from multiprocessing import Lock
 
 
+
 l = Lock()
 class readThread (threading.Thread):
     def __init__(self,clientSocket, address,threadQueue,fihrist):
@@ -18,27 +19,59 @@ class readThread (threading.Thread):
 
     def parser(self,data):
             response = ""
+            alfabe = "abcdefghijklmnopqrstuvwxyz"
+            list = ['USR','QUI','TIC','SAY','MSG','LSQ']
+            self.nickname = data[4:]
+            y = 0
+            h = 0
+            c = 0
+            for i in self.nickname:
+                if i == " ":
+                    h = 1
+
+            if h == 1 :
+                response = "REJ" + self.nickname
+            for i in alfabe:
+                for j in self.nickname :
+                    if i != j:
+                        y = 1
+            if y==1:
+                response = "REJ" + self.nickname
             data = data.strip()
+
+            if not self.nickname and not data[0:3] == "USR":
+                response = "ERL"
+            for i in list :
+                if c != data[0:3]:
+                   c = c + 1
+            if c == 6 :
+                response = "ERR"
 
             if data[0:3] == "USR":
                 p = 0
-                nickname = data[4:]
                 for k in self.fihrist.keys() :
-                    if nickname == k :
+                    if self.nickname == k :
                        p = p + 1
                 if p ==  0:
-                    response = "HEL" +" "+ nickname
-                    self.fihrist[nickname] = self.threadQueue
+                    response = "HEL" +" "+ self.nickname
+                    self.fihrist[self.nickname] = self.threadQueue
                 else :
-                            response = "REJ"+" "+nickname
+                            response = "REJ"+" "+self.nickname
                 print self.fihrist
 
             elif data[0:3] == "QUI":
-                response = "BYE"
+                for k,l in self.fihrist.iteritems() :
+                    if l == self.threadQueue :
+                        response = "BYE" + str(k)
+                try:
+                    del self.fihrist[k]
+                    print self.fihrist
+                except KeyError:
+                    pass
 
 
             elif data[0:3] == "LSQ":
-                response ="LSA"
+                response ="LSA" + str(self.fihrist.keys())
 
             elif data[0:3] == "TIC":
                 response = "TOC"
@@ -50,9 +83,6 @@ class readThread (threading.Thread):
 
             elif data[0:3] == "MSG":
                 response = "MOK"
-
-            elif data[0:3] == "ERR":
-                response = "hata var"
 
             else :
                 response = "yanlis komut"
@@ -103,7 +133,7 @@ class writeThread (threading.Thread):
 
 s = socket.socket()         # Create a socket object
 host = "127.0.0.1" # Get local machine name
-port = 12345                # Reserve a port for your service.
+port = 9999                # Reserve a port for your service.
 s.bind((host, port))        # Bind to the port
 threads_1 = []
 threads_2 = []
