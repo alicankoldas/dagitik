@@ -7,8 +7,9 @@ import random
 from multiprocessing import Lock
 
 
+dict = {}
+lock = Lock()
 
-l = Lock()
 class readThread (threading.Thread):
     def __init__(self,clientSocket, address,threadQueue,fihrist):
         threading.Thread.__init__(self)
@@ -54,14 +55,14 @@ class readThread (threading.Thread):
                        p = p + 1
                 if p ==  0:
                     response = "HEL" +" "+ self.nickname
-                    self.fihrist[self.nickname] = self.threadQueue
+                    self.fihrist[self.nickname] = self.clientSocket
                 else :
                             response = "REJ"+" "+self.nickname
                 print self.fihrist
 
             elif data[0:3] == "QUI":
                 for k,l in self.fihrist.iteritems() :
-                    if l == self.threadQueue :
+                    if l == self.clientSocket :
                         response = "BYE" + str(k)
                 try:
                     del self.fihrist[k]
@@ -78,11 +79,42 @@ class readThread (threading.Thread):
 
 
             elif data[0:3] == "SAY":
-                message = data[4:0]
+                message = data[4:]
+                print message
+                is_there_user = 0
                 response = "SOK" +" "+ message
+                to_nick = ""
+                for nick , sock in self.fihrist.iteritems() :
+                        if sock == self.clientSocket :
+                            from_nick = nick
+                            is_there_user = 1
+                            #lock.acquire()
+                            self.threadQueue.put((to_nick,from_nick,message))
+                            #lock.release()
+
+                if is_there_user == 0 :
+                    response = "ERL"
 
             elif data[0:3] == "MSG":
-                response = "MOK"
+                is_there_user = 0
+                data_1 = data[3:]
+                data_1 = data_1.strip()
+                word = data_1.split(':')
+                to_nick = word[0]
+                print to_nick
+                message = word[1]
+                print message
+                for nick , sock in self.fihrist.iteritems() :
+                        if sock == self.clientSocket :
+                            print "evveettttt"
+                            from_nick = nick
+                            print from_nick
+                            is_there_user = 1
+                            self.threadQueue.put((to_nick,from_nick,message))
+                if is_there_user == 1 :
+                    response = "MOK"
+                if is_there_user == 0 :
+                    response = "MNO"+" "+from_nick
 
             else :
                 response = "yanlis komut"
@@ -97,36 +129,59 @@ class readThread (threading.Thread):
        cur_thread = threading.currentThread()
        print "Starting"+ cur_thread.getName()
        while  data != "bitti":
-            l.acquire()
-            print 'Got connection from', self.address,cur_thread.getName()
-            l.release()
+            #print 'Got connection from', self.address,cur_thread.getName()
             data = self.clientSocket.recv(1024)
             print(data)
             data_1 = self.parser(data)
-
             self.threadQueue.put(data_1)
-
        print "Exiting" + cur_thread.getName()
 
 class writeThread (threading.Thread):
-    def __init__(self,cSocket, address,threadQueue):
+    def __init__(self,cSocket, address,threadQueue,fihrist):
         threading.Thread.__init__(self)
-        #self.name = name
         self.cSocket = cSocket
         self.address = address
         self.threadQueue = threadQueue
+        self.fihrist = fihrist
 
     def run(self):
 
        cur_thread = threading.currentThread()
-       l.acquire()
+       #l.acquire()
        print "Starting"+ cur_thread.getName()
-       l.release()
+       #l.release()
        while  True :
 
          if  self.threadQueue.qsize() > 0:
+                sayac = 0
+                tuple_1 = ['LSA','BYE','TIC','HEL','REJ','SOK','MOK','MNO','ERR','ERL']
                 queue_message = self.threadQueue.get()
-                self.cSocket.send(queue_message)
+                print queue_message
+
+                data_1 = queue_message[0:3]
+                for i in tuple_1 :
+                    if data_1 == i :
+                        sayac = 1
+                if sayac == 1 :
+                    self.cSocket.send(queue_message)
+
+                if sayac == 0 :
+                    print "bulundunuz araniyorsunuz"
+                    queue_message_1 = str(queue_message)
+                    data_2 = queue_message_1.split(',')
+                    print data_2[0]
+                    if data_2[0] == "(''":
+                        print "ah sen ne guzel guluyorsun"
+                        print self.fihrist
+                        for nick, sock in self.fihrist.iteritems() :
+                            sock.send(data_2[2])
+                    else :
+                        for nick, sock in self.fihrist.iteritems() :
+                            if data_2[0] == nick :
+                              sock.send(data_2[2])
+
+
+
 
        print "Exiting" + cur_thread.getName()
 
@@ -143,8 +198,10 @@ s.listen(5)                 # Now wait for client connection.
 while True:
    c, addr = s.accept()     # Establish connection with client.
    myThread_1 = readThread(c,addr,threadQ,dict)
-   myThread_2 = writeThread(c,addr,threadQ)
+   myThread_2 = writeThread(c,addr,threadQ,dict)
+   myThread_1.setDaemon(True)
    myThread_1.start()
+   myThread_2.setDaemon(True)
    myThread_2.start()
    threads_1.append(myThread_1)
    threads_2.append(myThread_2)
