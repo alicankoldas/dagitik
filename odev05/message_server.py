@@ -162,7 +162,7 @@ class readThread (threading.Thread):
        while  data != "bitti":
             #print 'Got connection from', self.address,cur_thread.getName()
             data = self.clientSocket.recv(1024)
-            print(data)
+            print(data+"----------")
 
             data_1 = self.parser(data)
             #lock.acquire()
