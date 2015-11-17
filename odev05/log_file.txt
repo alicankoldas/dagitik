@@ -1,0 +1,50 @@
+
+
+
+
+Tue Nov 17 21:04:08 2015 Starting LoggerThread
+Tue Nov 17 21:04:08 2015 Waiting for connection
+
+Tue Nov 17 21:04:13 2015 Got connection from<socket._socketobject object at 0x00000000024A5798> ('127.0.0.1', 10021)
+
+Tue Nov 17 21:04:13 2015 Starting ReadThread-2
+
+Tue Nov 17 21:04:13 2015 Waiting for connection
+
+Tue Nov 17 21:04:13 2015 Starting WriteThread-3
+Tue Nov 17 21:04:21 2015 Got connection from<socket._socketobject object at 0x00000000024A5D48> ('127.0.0.1', 10022)
+
+Tue Nov 17 21:04:21 2015 Starting ReadThread-4
+
+Tue Nov 17 21:04:21 2015 Waiting for connection
+
+Tue Nov 17 21:04:21 2015 Starting WriteThread-5
+Tue Nov 17 21:04:31 2015 erdal has join
+
+Tue Nov 17 21:04:48 2015 erdem has join
+
+Tue Nov 17 21:07:43 2015 Starting LoggerThread
+Tue Nov 17 21:07:43 2015 Waiting for connection
+
+Tue Nov 17 21:07:47 2015 Got connection from<socket._socketobject object at 0x00000000024B5798> ('127.0.0.1', 10033)
+
+Tue Nov 17 21:07:47 2015 Starting ReadThread-2
+
+Tue Nov 17 21:07:47 2015 Waiting for connection
+
+Tue Nov 17 21:07:47 2015 Starting WriteThread-3
+Tue Nov 17 21:07:53 2015 Got connection from<socket._socketobject object at 0x00000000024B5D48> ('127.0.0.1', 10034)
+
+Tue Nov 17 21:07:53 2015 Starting ReadThread-4
+
+Tue Nov 17 21:07:53 2015 Waiting for connection
+
+Tue Nov 17 21:07:53 2015 Starting WriteThread-5
+Tue Nov 17 21:08:00 2015 erdal has join
+
+Tue Nov 17 21:08:30 2015 erdem has join
+
+Tue Nov 17 21:10:45 2015 <socket._socketobject object at 0x00000000024B5798> has left
+
+Tue Nov 17 21:11:02 2015 <socket._socketobject object at 0x00000000024B5D48> has left
+

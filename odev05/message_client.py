@@ -3,13 +3,12 @@ __author__ = 'AKOLDAS'
 import socket               # Import socket module
 import threading
 from multiprocessing import Queue
-import time
-from PyQt4.QtCore import *
+from PyQt4 import QtCore
 from PyQt4.QtGui import *
 import sys
 
 
-
+id = QtCore.QMetaType.type('MyClass')
 
 
 class ReadThread_Client (threading.Thread):
@@ -22,54 +21,64 @@ class ReadThread_Client (threading.Thread):
         self.app = app
 
     def incoming_parser(self,data):
-        response = ""
-        if data[0:3] == 'HEL':
-            response = data
-            self.app.cprint(response)
-        elif data [0:3] == 'REJ' :
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'SOK':
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'TOC':
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'LSA':
-            response == data
-            self.app.cprint(response)
-        elif data[0:3] == 'ERR':
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'ERL':
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'MOK':
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'MNO' :
-            response = data
-            self.app.cprint(response)
-        elif data[0:3] == 'BYE' :
-            response = data
-            self.app.cprint(response)
-        else :
-            #print data
-            data = data.replace("'","").replace("(","").replace(")","").replace(",","")
-            #print data
-            response = data
-            self.app.cprint(response)
+            response = ""
+            nickname_2 = ""
+            if data[0:3] == 'HEL':
+                    response = data
+                    print "Server response : "+response # burada console ekranina dogrudan sunucu tarafindan gelen mesaji bastiriyorum gorun diye orijinal mesaji
+                    nickname_2 = data[4:]
+                    self.app.cprint("-Server- Registered as <"+nickname_2+">")
+            if data [0:3] == 'REJ' :
+                    response = data
+                    print "Server response : "+response
+                    nickname_2 = data[4:0]
+                    self.app.cprint("-Server-"+nickname_2+"not registered")
+            if data[0:3] == 'SOK':
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'TOC':
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'LSA':
+                    response == data
+                    print "Server response : "+response
+
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'ERR':
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'ERL':
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'MOK':
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'MNO' :
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            if data[0:3] == 'BYE' :
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
+            else :
+                    data = data.replace("'","").replace("(","").replace(")","").replace(",","")
+                    response = data
+                    print "Server response : "+response
+                    self.app.cprint("-Server- "+response)
 
 
 
     def run(self) :
-         while True :
-            data = self.cSocket.recv(1024)
-            #print(data)
-            #data_1234 = self.incoming_parser(data)
-            #print data_1234
-            self.incoming_parser(data)
-            #self.threadQueue_1.put(data_1234)
+            while True :
+                    data = self.cSocket.recv(1024)
+                    self.incoming_parser(data)
+
 
 class WriteThread_Client (threading.Thread) :
     def __init__(self,name,csoc,threadQueue_1):
@@ -81,19 +90,12 @@ class WriteThread_Client (threading.Thread) :
     def run(self):
             while True :
 
-                ####if self.threadQueue_1.qsize() == 0 :
-                ####    string_1 = raw_input("Enter your input: ")
-
                 if self.threadQueue_1.qsize() > 0 :
-                    print "*******"
                     kuyruk_mesaji = self.threadQueue_1.get()
-                    print kuyruk_mesaji
-                    print "*******"
+                    print "istemci tarifindan gonderilen mesaj : "+kuyruk_mesaji
 
                     self.csoc.send(str(kuyruk_mesaji))
-                    #print('input value %s in thread %s' % (string_1, self.name))
 
-                #if self.threadQueue_1.qsize() > 0:
 
 
 class ClientDialog(QDialog) :
@@ -130,8 +132,8 @@ class ClientDialog(QDialog) :
 
     def outgoing_parser(self):
         data = self.sender.text()
-        print data
-        self.cprint(data)
+        print "Kullanicinin arayuzden girdigi mesaj : "+data
+        self.cprint("Local:- "+data)
         command =""
         nickname_1 = ""
         nickname_2 = ""
@@ -139,23 +141,25 @@ class ClientDialog(QDialog) :
         if len(data) == 0:
             return
         if data[0] == "/":
-            data_bestvan = data.split(" ")
-            print data_bestvan
-            if data_bestvan[1] == "nick":
-                nickname_1 = data_bestvan[2]
-                self.threadQueue.put("USR"+" "+nickname_1)
-            elif data_bestvan[1] == "list":
-                self.threadQueue.put("LSQ")
-            elif data_bestvan[1] == "quit":
-                self.threadQueue.put("QUI")
-            elif data_bestvan[1] == "msg":
-                nickname_2 = data_bestvan[2]
-                message_1 = data_bestvan[3]
-                self.threadQueue.put("MSG"+" "+nickname_2+" "+message_1)
-            else :
-                self.cprint("Local: Command Error.")
+                incoming_client_interface_data = data.split(" ")  # istemci arayuzu tarfindan girilen data
+                #print "Kullanicinin arayuzden girdigi mesaj : "+str(incoming_client_interface_data) # istemci console ekranina bastir
+                if incoming_client_interface_data[1] == "nick":
+                        nickname_1 = incoming_client_interface_data[2]
+                        self.threadQueue.put("USR"+" "+nickname_1)
+                elif incoming_client_interface_data[1] == "list":
+                        self.threadQueue.put("LSQ")
+                elif incoming_client_interface_data[1] == "quit":
+                        self.threadQueue.put("QUI")
+                elif incoming_client_interface_data[1] == "msg":
+                        nickname_2 = incoming_client_interface_data[2]
+                        message_1 = incoming_client_interface_data[3]
+                        self.threadQueue.put("MSG"+" "+nickname_2+":"+message_1)
+                elif incoming_client_interface_data[1] == "connexion": # kendim ekledim baglanti kontrol durumu icin
+                        self.threadQueue.put("TIC")
+                else :
+                        self.cprint("Local: Command Error.")
         else :
-            self.threadQueue.put("SAY"+" "+data)
+                self.threadQueue.put("SAY"+" "+data)
         self.sender.clear()
 
     def run(self):
@@ -166,9 +170,9 @@ class ClientDialog(QDialog) :
 
 
 
-s = socket.socket()         # Create a socket object
-host = "127.0.0.1" # Get local machine name
-port = 9996               # Reserve a port for your service.
+s = socket.socket()         # soket objesini yarat
+host = "127.0.0.1" # locale machine hostu al
+port = 9996               #  port numarasi
 s.connect((host, port))
 sendQueue = Queue()
 
