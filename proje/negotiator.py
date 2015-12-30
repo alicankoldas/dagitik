@@ -69,7 +69,7 @@ class Chat_Server(threading.Thread):
                 while  True:
                         message = self.cSocket.recv(1024)
                         message_1 = self.parser(message)
-                        print "gunaydin sevigilim"
+                        print "deneme_1"
                         print (message_1)
                         print "sapanbaglari"
                         #message_2 = (message_1," ",message)
@@ -92,7 +92,7 @@ class Chat_Client(threading.Thread):
                                     data = self.queue.get()
                                     self.peer_ip = data[0]
                                     self.peer_port = (int)(data[1])
-                                    print "miniksait"
+                            
                                     try:
                                         client_Socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                                         client_Socket.connect((self.peer_ip,  self.peer_port))
@@ -129,7 +129,7 @@ class Chat_Read_Client(threading.Thread):
                             if self.fihrist.has_key(datamania):
                                         l.send(response_34)
                 elif data_2[0:5] == "CLOSE":
-                     response_32 = "bilmirem"
+                     response_32 = "deneme_2"
                 elif data_2[0:5] == "REGME":
                      datta = data_2[6:].split(":")
                      ip_no_1 = datta[0]
@@ -138,7 +138,7 @@ class Chat_Read_Client(threading.Thread):
                      for k,l,m,v in self.fihrist.values() :
                               if self.fihrist.has_key(port_no_1):
                                         l.send(response)
-                                        print "seydisehir"
+                                        print "deneme_3"
                 elif data_2[0:5] == "REGOK":
                              response = "REGOK"
                              port_port = data_2[6:]
@@ -157,28 +157,28 @@ class Chat_Read_Client(threading.Thread):
 
 
             def run(self):
-                print "deneme_1"
+                print "deneme_4"
                 while True :
                         if self.msg_1_queue.qsize > 0 :
                                 data_1 = self.msg_1_queue.get()
                                 print data_1
-                                print "mavisehir"
+                                print "deneme_5"
                                 self.parser_1(data_1)
                         if self.msg_queue.qsize > 0 :
                                 data_3 = self.msg_queue.get()
                                 self.parser_1(data_3)
-                                print "orhangazi"
+                                print "deneme_6"
 
                         #if self.msg_queue.qsize > 0 :
                                 #data_1 = self.msg_queue.get()
                                 #print data_1
                                 #data_2 = data_1.split(" ")
-                                #print "deneme_5"
+                                #print "deneme_7"
                                 #print data_1[1]
                                 #for mess, sock in self.fihrist.iteritems() :
                                     #print "deneme_2"
                                     #if data_1[2] == mess :
-                                        #print "deneme_van"
+                                        #print "deneme_8"
                                         #sock.send(str(data_1[0]))
 
 
